@@ -22,7 +22,8 @@ defmodule WeatherGen.MixProject do
       {:req, "~> 0.4.0"},
       {:jason, "~> 1.4"},
       {:uuid, "~> 1.1"},
-      {:yaml_elixir, "~> 2.9"}
+      {:yaml_elixir, "~> 2.9"},
+      {:castore, "~> 1.0"}
     ]
   end
 end
