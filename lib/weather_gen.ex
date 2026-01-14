@@ -66,7 +66,7 @@ defmodule WeatherGen do
         """
         |> String.trim()
       end)
-      |> Enum.join("\r\n")
+      |> Enum.join("\n")
 
       """
       BEGIN:VCALENDAR
@@ -80,7 +80,31 @@ defmodule WeatherGen do
       END:VCALENDAR
       """
       |> String.trim()
-      |> String.replace("\n", "\r\n")
+      |> String.split("\n")
+      |> Enum.map(&String.trim/1)
+      |> Enum.map(&fold_line/1)
+      |> Enum.join("\r\n")
+    end
+
+    defp fold_line(line) do
+      fold_line(line, 75)
+    end
+
+    defp fold_line(line, limit) do
+      if byte_size(line) <= limit do
+        line
+      else
+        {head, tail} = split_string_at_bytes(line, limit)
+        head <> "\r\n " <> fold_line(tail, 74)
+      end
+    end
+
+    defp split_string_at_bytes(str, limit) do
+      if String.valid?(binary_part(str, 0, limit)) do
+        {binary_part(str, 0, limit), binary_part(str, limit, byte_size(str) - limit)}
+      else
+        split_string_at_bytes(str, limit - 1)
+      end
     end
   end
 
@@ -253,7 +277,7 @@ defmodule WeatherGen do
       %WeatherGen.Event{
         start_date: String.replace(Date.to_string(day_data.date), "-", ""),
         summary: summary,
-        description: "#{description}\n出典: 気象庁"
+        description: "#{description}\\n出典: 気象庁"
       }
     end
 
