@@ -1,0 +1,12 @@
+
+# Ignore artifacts
+_build
+deps
+.git
+.gitignore
+*.md
+LICENSE
+test_app
+my_app
+debug_*.exs
+hello.exs
