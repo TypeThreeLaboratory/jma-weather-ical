@@ -3,6 +3,8 @@ FROM elixir:1.15-alpine AS builder
 
 # 環境をプロダクションに設定
 ENV MIX_ENV=prod
+# QEMU(ARM64)でのビルドクラッシュを防ぐため、スケジューラをシングルスレッドに制限
+ENV ERL_FLAGS="+S 1"
 
 WORKDIR /app
 
