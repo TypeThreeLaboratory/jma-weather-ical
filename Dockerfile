@@ -1,10 +1,10 @@
 # Build Stage
-FROM elixir:1.15-alpine AS builder
+FROM elixir:1.15-otp-25-alpine AS builder
 
 # 環境をプロダクションに設定
 ENV MIX_ENV=prod
 # QEMU(ARM64)でのビルドクラッシュを防ぐため、スケジューラをシングルスレッドに制限
-ENV ERL_FLAGS="+S 1"
+ENV ERL_FLAGS="+S 1 +sbwt none +sbwtdcpu none +sbwtdio none"
 
 WORKDIR /app
 
