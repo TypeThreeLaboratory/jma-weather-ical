@@ -4,47 +4,29 @@
 
 ## 必要なもの
 
-- Docker (推奨)
-- または Elixir (ローカル実行用)
+- Docker
 
-## 実行手順 (Docker)
+## 実行手順
 
 環境構築不要で実行できます。
 
 1. **Dockerイメージのビルド**
 
    ```bash
-   docker build -t jma-weather .
+   docker build -t jma-weather-gen .
    ```
 
 2. **アプリケーションの実行とデータ取得**
 
    ```bash
-   # コンテナを実行 (データ生成)
-   docker run --name jma-gen jma-weather
+   # コンテナを実行してデータを作成
+   docker run --name jma-weather-gen jma-weather-gen:latest
 
-   # 生成されたデータをホストの doc ディレクトリにコピー
-   # (既存の doc ディレクトリがある場合は上書きされます)
-   docker cp jma-gen:/app/doc .
+   # コンテナから生成されたデータをコピー
+   docker cp jma-weather-gen:/app/dist ./dist
 
-   # コンテナの削除
-   docker rm jma-gen
+   # 使用済みコンテナの削除
+   docker rm jma-weather-gen
    ```
 
-   `doc` ディレクトリに `.ics` ファイルが生成されます。
-
-## 実行手順 (ローカル Elixir 環境)
-
-1. **依存関係のインストール**
-
-   ```bash
-   mix deps.get
-   ```
-
-2. **アプリケーションの実行**
-
-   ```bash
-   mix run -e 'WeatherGen.App.run()'
-   ```
-
-   `cities.yaml` の設定に基づいて気象データを取得し、`doc` ディレクトリに `.ics` ファイルが生成されます。
+   `dist` ディレクトリに `.ics` ファイルが生成されます。

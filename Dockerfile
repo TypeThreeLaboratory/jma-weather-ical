@@ -1,31 +1,51 @@
+# Build Stage
+FROM elixir:1.15-alpine AS builder
 
-FROM elixir:latest
-
-# Set environment to production
+# 環境をプロダクションに設定
 ENV MIX_ENV=prod
 
 WORKDIR /app
 
-# Install Hex and Rebar
+# ビルドに必要なツールをインストール
+RUN apk add --no-cache build-base git
+
+# Hex と Rebar をインストール
 RUN mix local.hex --force && \
     mix local.rebar --force
 
-# Copy configuration files first
+# 設定ファイルを先にコピー
 COPY mix.exs mix.lock ./
 
-# Fetch dependencies
-RUN mix deps.get
+# 依存関係の取得とコンパイル
+RUN mix deps.get --only prod
 RUN mix deps.compile
 
-# Copy application code
+# アプリケーションコードと設定をコピー
 COPY lib ./lib
 COPY cities.yaml ./
 
-# Compile the application
+# リリースの作成
 RUN mix compile
+RUN mix release
 
-# Create the output directory
-RUN mkdir -p doc
+# 実行用のラッパースクリプトを作成
+RUN echo '#!/bin/sh' > WeatherGen && \
+    echo 'exec /app/bin/weather_gen eval "WeatherGen.main()"' >> WeatherGen && \
+    chmod +x WeatherGen
 
-# Command to run the application
-CMD ["mix", "run", "-e", "WeatherGen.App.run()"]
+# Runtime Stage
+FROM alpine:latest AS runtime
+
+# 実行に必要なランタイムライブラリをインストール
+RUN apk add --no-cache libstdc++ ncurses-libs openssl libgcc
+
+WORKDIR /app
+
+# ビルドステージからリリースと設定ファイルをコピー
+COPY --from=builder /app/_build/prod/rel/weather_gen ./
+COPY --from=builder /app/cities.yaml ./
+COPY --from=builder /app/WeatherGen ./
+
+# 実行コマンドの設定
+# ラッパースクリプトを直接実行する形式に変更
+CMD ["./WeatherGen"]
