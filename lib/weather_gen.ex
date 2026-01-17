@@ -240,6 +240,53 @@ defmodule WeatherGen do
             _ -> :ok
           end
         end
+        # Generate index.html after processing all cities
+        generate_index_html(output_dir, cities)
+      end
+    end
+
+    defp generate_index_html(output_dir, cities) do
+      list_items =
+        cities
+        |> Enum.sort_by(fn {city_en, _} -> city_en end)
+        |> Enum.map(fn {city_en, _code} ->
+          """
+          <li><a href="#{city_en}.ics">#{city_en}</a></li>
+          """
+        end)
+        |> Enum.join("\n")
+
+      html_content = """
+      <!DOCTYPE html>
+      <html lang="ja">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>JMA Weather iCal</title>
+          <style>
+              body { font-family: sans-serif; margin: 2rem; }
+              h1 { border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
+              ul { list-style-type: none; padding: 0; }
+              li { margin: 0.5rem 0; }
+              a { text-decoration: none; color: #007bff; font-weight: bold; }
+              a:hover { text-decoration: underline; }
+          </style>
+      </head>
+      <body>
+          <h1>JMA Weather iCal</h1>
+          <p>以下のリンクからiCalendar形式の天気予報データを取得できます。</p>
+          <ul>
+              #{list_items}
+          </ul>
+      </body>
+      </html>
+      """
+
+      File.mkdir_p!(output_dir)
+      filename = Path.join(output_dir, "index.html")
+      case File.write(filename, html_content) do
+        :ok -> Logger.info("Generated #{filename}")
+        {:error, reason} -> Logger.error("Failed to write file #{filename}: #{inspect(reason)}")
       end
     end
 
