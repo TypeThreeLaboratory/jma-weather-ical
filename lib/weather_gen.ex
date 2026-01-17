@@ -318,7 +318,7 @@ defmodule WeatherGen do
       |> Enum.filter(& &1.weather) # 天気情報がない日はスキップ
       |> Enum.filter(&(Date.compare(&1.date, today) != :lt)) # 過去の日付はスキップ
       |> Enum.sort_by(& &1.date)
-      |> Enum.map(&format_event(&1, city_name_en))
+      |> Enum.map(&format_event(&1, city_name_en, today))
     end
 
     defp merge_series_data(acc, %{"timeDefines" => time_defines, "areas" => areas})
@@ -418,17 +418,21 @@ defmodule WeatherGen do
 
 
 
-    defp format_event(day_data, city_name_en) do
+    defp format_event(day_data, city_name_en, today) do
       weather_text = day_data.weather || "情報なし"
       
       # 温度の有無チェック
       has_temps = day_data.min != nil and day_data.max != nil
       
       # Summaryの作成
-      summary = if has_temps do
-        "#{weather_text} #{day_data.max}℃/#{day_data.min}℃"
-      else
+      summary = if day_data.date == today do
         "#{weather_text}"
+      else
+        if has_temps do
+          "#{weather_text} #{day_data.max}℃/#{day_data.min}℃"
+        else
+          "#{weather_text}"
+        end
       end
 
       # Descriptionの作成
