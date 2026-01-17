@@ -2,7 +2,7 @@ name: Weather Update
 
 on:
   schedule:
-    - cron: '0 21 * * *' # 6:00 JST (21:00 UTC previous day)
+    - cron: '0 */4 * * *' # Every 4 hours
   workflow_dispatch:
 
 permissions:
