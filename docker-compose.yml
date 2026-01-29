@@ -1,5 +1,5 @@
 services:
   weather-gen:
-    image: ghcr.io/typethreelaboratory/jma-weather-ical:latest
+    image: ghcr.io/malken21/jma-weather-ical:latest
     volumes:
       - ./dist:/app/dist
