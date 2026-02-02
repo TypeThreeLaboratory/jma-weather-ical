@@ -242,8 +242,6 @@ defmodule WeatherGen do
         end
         # Generate index.html after processing all cities
         generate_index_html(output_dir, cities)
-        # Generate sitemap.xml
-        generate_sitemap_xml(output_dir)
         # Generate robots.txt
         generate_robots_txt(output_dir)
         # Generate favicon.svg
@@ -251,35 +249,10 @@ defmodule WeatherGen do
       end
     end
 
-    defp generate_sitemap_xml(output_dir) do
-      today = Date.to_string(Date.utc_today())
-      
-      sitemap_content = """
-      <?xml version="1.0" encoding="UTF-8"?>
-      <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        <url>
-          <loc>https://jma-weather-ical.vercel.app/</loc>
-          <lastmod>#{today}</lastmod>
-          <changefreq>daily</changefreq>
-          <priority>1.0</priority>
-        </url>
-      </urlset>
-      """
-      |> String.trim()
-
-      File.mkdir_p!(output_dir)
-      filename = Path.join(output_dir, "sitemap.xml")
-      case File.write(filename, sitemap_content) do
-        :ok -> Logger.info("Generated #{filename}")
-        {:error, reason} -> Logger.error("Failed to write file #{filename}: #{inspect(reason)}")
-      end
-    end
-
     defp generate_robots_txt(output_dir) do
       content = """
       User-agent: *
       Allow: /
-      Sitemap: https://jma-weather-ical.vercel.app/sitemap.xml
       """
       
       File.mkdir_p!(output_dir)
@@ -336,12 +309,12 @@ defmodule WeatherGen do
           <title>JMA Weather iCal - 気象庁天気予報iCalendarデータ</title>
           <meta name="description" content="気象庁の天気予報データをiCalendar形式(.ics)で提供します。GoogleカレンダーやOutlookなどで日本の天気予報を確認できます。">
           <meta name="keywords" content="天気予報, iCalendar, ics, カレンダー, 気象庁, API, 自動更新">
-          <link rel="canonical" href="https://jma-weather-ical.vercel.app/">
+          <link rel="canonical" href="https://jma-weather-ical.marumasa.dev/">
           <link rel="icon" type="image/svg+xml" href="favicon.svg">
           
           <!-- Open Graph / Facebook -->
           <meta property="og:type" content="website">
-          <meta property="og:url" content="https://jma-weather-ical.vercel.app/">
+          <meta property="og:url" content="https://jma-weather-ical.marumasa.dev/">
           <meta property="og:title" content="JMA Weather iCal - 気象庁天気予報iCalendarデータ">
           <meta property="og:description" content="気象庁の天気予報データをiCalendar形式(.ics)で提供します。">
           
