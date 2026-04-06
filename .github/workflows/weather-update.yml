@@ -2,7 +2,7 @@ name: Weather Update
 
 on:
   schedule:
-    - cron: '0 */4 * * *' # Every 4 hours
+    - cron: '0 */4 * * *' # 4時間ごと
   workflow_dispatch:
 
 permissions:
