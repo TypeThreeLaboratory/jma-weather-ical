@@ -12,6 +12,6 @@ jobs:
       actions: write
     steps:
       - name: Enable all workflows
-        run: gh workflow enable --all
+        run: gh workflow list --all --json id -q '.[].id' | xargs -I{} gh workflow enable {}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
