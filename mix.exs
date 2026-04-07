@@ -4,7 +4,7 @@ defmodule WeatherGen.MixProject do
   def project do
     [
       app: :weather_gen,
-      version: "1.0.10",
+      version: "1.0.11",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps()
@@ -26,3 +26,4 @@ defmodule WeatherGen.MixProject do
     ]
   end
 end
+
